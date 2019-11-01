@@ -1,6 +1,17 @@
+
+import csv
 # Create a class to hold a city location. Call the class "City". It should have
 # fields for name, lat and lon (representing latitude and longitude).
 
+
+class City():
+    def __init__(self, name, lat, lon):
+        self.name = name
+        self.lat = lat
+        self.lon = lon
+
+    def __str__(self):
+        return f'\n{self.name}, {self.lat}, {self.lon}'
 
 # We have a collection of US cities with population over 750,000 stored in the
 # file "cities.csv". (CSV stands for "comma-separated values".)
@@ -20,7 +31,13 @@ def cityreader(cities=[]):
   # TODO Implement the functionality to read from the 'cities.csv' file
   # For each city record, create a new City instance and add it to the 
   # `cities` list
-    
+  
+  with open('cities.csv', 'r') as f:
+    r = csv.reader(f)
+    all = [row for row in r]
+    for i in all[1:]:
+        cities.append(City(name=i[0], lat=float(i[3]), lon=float(i[4])))
+    f.close()
     return cities
 
 cityreader(cities)
@@ -62,10 +79,32 @@ for c in cities:
 
 def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
   # within will hold the cities that fall within the specified region
-  within = []
+  # First Lets make sure all of the data is properly converted to floats to work with.
+  # Then We need to normalize that data and sort it so that We know where our 2 corners will be and having those in order for us to access and preform logic
+  lat1 = float(lat1)
+  lon1 = float(lon1)
+  lat2 = float(lat2)
+  lon2 = float(lon2)
 
+  if lat1 > lat2:
+      temp = lat1
+      lat1 = lat2
+      lat2 = temp
+
+  if lon1 > lon2:
+      temp = lon1
+      lon1 = lon2
+      lon2 = temp
+  
+  within = [c for c in cities if lat1 < c.lat < lat2 and lon1 < c.lon < lon2]
+  print(c for c in within)
   # TODO Ensure that the lat and lon valuse are all floats
   # Go through each city and check to see if it falls within 
   # the specified coordinates.
 
   return within
+
+coord1 = input("Enter a coordinate: [long] [lat]: ").split(' ')
+coord2 = input("Enter a second coordinate: ").split(' ')
+
+cityreader_stretch(coord1[0], coord1[1], coord2[0], coord2[1], cities)
